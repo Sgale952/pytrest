@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class Authorities {
+public class AuthoritiesEntity {
     @Id
     private String owner;
     private String authority;

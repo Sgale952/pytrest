@@ -4,5 +4,5 @@ CREATE TABLE collections (
     name VARCHAR(20) NOT NULL,
     create_date TIMESTAMP,
 
-    FOREIGN KEY (owner) REFERENCES users(email) ON DELETE CASCADE
+    FOREIGN KEY (owner) REFERENCES users(username) ON DELETE CASCADE
 );

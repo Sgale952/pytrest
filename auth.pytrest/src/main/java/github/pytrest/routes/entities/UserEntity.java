@@ -2,14 +2,23 @@ package github.pytrest.routes.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-public class User {
+@Table(name = "users")
+public class UserEntity {
     @Id
     private String email;
     private String password;
     private String username;
     private long avatarId;
+
+    public UserEntity() {}
+    public UserEntity(String email, String password, String username) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+    }
 
     public String getEmail() {
         return email;

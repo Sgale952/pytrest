@@ -1,42 +1,26 @@
 package github.pytrest.routes.controllers;
 
-import github.pytrest.routes.entities.User;
-import github.pytrest.routes.models.RegistrationModel;
-import github.pytrest.security.PytrestUserDetails;
-import github.pytrest.security.PytrestUserDetailsManager;
-import org.springframework.http.HttpStatus;
+import github.pytrest.routes.repositories.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasRole;
 
 @RestController
 public class AuthController {
 
-    //@PreAuthorize()
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegistrationModel registrationModel) {
-        User user = registrationModel.user();
-        Collection<? extends GrantedAuthority> authorities = registrationModel.authorities().stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+    @Autowired
+    UserRepo userRepo;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-        PytrestUserDetails userDetails = new PytrestUserDetails(user, authorities);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/a")
     public ResponseEntity<String> test() {
-        return ResponseEntity.ok("ABOBA");
+/*        UserEntity user = new UserEntity("anon@tuta.com", passwordEncoder.encode("1234"), "anon");
+        userRepo.save(user);*/
+        return ResponseEntity.ok("user.getPassword()");
     }
 }
