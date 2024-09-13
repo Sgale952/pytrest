@@ -1,5 +1,5 @@
-CREATE TABLE users (
-    username TEXT NOT NULL;
+CREATE TABLE users_profile (
+    username VARCHAR(20) NOT NULL,
     nickname VARCHAR(20) NOT NULL,
     avatar_id BIGINT NOT NULL DEFAULT 0,
 
