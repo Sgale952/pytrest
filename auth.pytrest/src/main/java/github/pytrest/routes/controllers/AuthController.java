@@ -15,9 +15,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RestController("/auth")
+@RestController()
+@RequestMapping("/auth")
 public class AuthController {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
@@ -37,11 +38,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsManager = userDetailsManager;
         this.authenticationManager = authenticationManager;
-    }
-
-    @GetMapping("/a")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("user.getPassword()");
     }
 
     @PostMapping("/register")
