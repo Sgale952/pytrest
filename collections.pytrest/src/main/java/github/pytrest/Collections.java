@@ -2,12 +2,10 @@ package github.pytrest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@EnableDiscoveryClient
 @SpringBootApplication
-public class Auth {
+public class Collections {
     public static void main(String[] args) {
-        SpringApplication.run(Auth.class, args);
+        SpringApplication.run(Collections.class, args);
     }
 }
