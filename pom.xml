@@ -23,6 +23,7 @@
   <modules>
     <module>auth.pytrest</module>
     <module>gateway.pytrest</module>
+    <module>eurekaserver.pytrest</module>
     <module>collections.pytrest</module>
   </modules>
 
