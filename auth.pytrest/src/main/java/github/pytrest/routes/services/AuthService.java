@@ -29,7 +29,7 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    public ResponseEntity<?> validate(String token) {
+    public ResponseEntity<Boolean> validate(String token) {
         return ResponseEntity.ok(jwtUtils.validateJwtToken(token));
     }
 

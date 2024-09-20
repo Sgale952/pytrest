@@ -4,15 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Mono;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
     @Autowired
     private RouteValidator validator;
     @Autowired
-    private JwtUtil jwtUtil;
+    private WebClient.Builder webClientBuilder;
 
     public AuthenticationFilter() {
         super(Config.class);
@@ -26,11 +30,12 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         });
     }
 
-    private void authenticate(ServerWebExchange exchange) {
+    private Mono<Void> authenticate(ServerWebExchange exchange) {
         if (validator.isSecured.test(exchange.getRequest())) {
             String token = getJwtToken(exchange);
-            validate(token);
+            return validate(token, exchange);
         }
+        return Mono.empty();
     }
 
     private String getJwtToken(ServerWebExchange exchange) {
@@ -52,16 +57,26 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         throw new RuntimeException("Incorrect authorization method. Use Bearer");
     }
 
-    private void validate(String jwtToken) {
-        try {
-            jwtUtil.validateJwtToken(jwtToken);
+    private Mono<Void> validate(String jwtToken, ServerWebExchange exchange) {
+        return webClientBuilder.build()
+            .post()
+            .uri("http://IDENTITY-SERVICE/auth/validate")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+            .retrieve()
+            .bodyToMono(Boolean.class)
+            .flatMap(isValid -> checkAuthStatus(isValid, exchange));
+    }
+
+    private Mono<Void> checkAuthStatus(Boolean isTokenValid, ServerWebExchange exchange) {
+        if (Boolean.TRUE.equals(isTokenValid)) {
+            return Mono.empty();
         }
-        catch (Exception e) {
-            System.out.println("Invalid access");
-            throw new RuntimeException("Unauthorized access to application");
+        else {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
         }
     }
-    
+
     public static class Config {
     }
 }

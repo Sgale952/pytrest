@@ -12,7 +12,6 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
-
 @Component
 public class JwtUtils {
     @Value("${spring.app.jwtSecret}")
@@ -58,5 +57,3 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 }
-
-

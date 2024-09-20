@@ -55,7 +55,7 @@ public class AuthController {
     }
 
     @PostMapping("/validate")
-    private ResponseEntity<?> validate(@RequestBody String token) {
-    return validate(token);
+    private ResponseEntity<Boolean> validate(@RequestBody String token) {
+    return authService.validate(token);
     }
 }
