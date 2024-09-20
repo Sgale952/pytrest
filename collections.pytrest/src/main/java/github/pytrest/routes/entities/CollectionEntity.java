@@ -1,8 +1,8 @@
 package github.pytrest.routes.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 

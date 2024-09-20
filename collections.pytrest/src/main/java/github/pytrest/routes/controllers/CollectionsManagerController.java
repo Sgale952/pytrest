@@ -2,6 +2,8 @@ package github.pytrest.routes.controllers;
 
 import github.pytrest.routes.repositories.CollectionFillingRepo;
 import github.pytrest.routes.repositories.CollectionRepo;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +21,7 @@ public class CollectionsManagerController {
     }
 
     @PostMapping("/create")
-    private void create(@RequestBody String name) {
-
-
+    private ResponseEntity<String> create() {
+        return ResponseEntity.ok("SUS");
     }
 }
