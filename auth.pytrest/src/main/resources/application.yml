@@ -2,10 +2,10 @@ spring:
   application:
     name: AUTH-SERVICE
 
+server:
+  port: 8180
+
 eureka:
   client:
     service-url:
-      defaultZone : http://localhost:8761/eureka/
-
-server:
-  port: 8180
+      defaultZone: http://localhost:8761/eureka/
