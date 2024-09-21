@@ -33,7 +33,7 @@ public class AuthService {
         if (jwtUtils.validateJwtToken(token)) {
             return jwtUtils.getUsernameFromJwtToken(token);
         }
-            return null;
+            return "";
     }
 
     public ResponseEntity<?> authenticate(LoginRequest loginRequest) {

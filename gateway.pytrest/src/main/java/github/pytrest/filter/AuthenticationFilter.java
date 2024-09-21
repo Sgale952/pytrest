@@ -2,39 +2,40 @@ package github.pytrest.filter;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
-
-import reactor.core.publisher.Mono;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
     private final RouteValidator validator;
-    private final WebClient.Builder webClientBuilder;
+    private final RestTemplate template;
 
-    public AuthenticationFilter(RouteValidator routeValidator, WebClient.Builder wBuilder) {
+    public AuthenticationFilter(RouteValidator routeValidator, RestTemplate template) {
         super(Config.class);
         this.validator = routeValidator;
-        this.webClientBuilder = wBuilder;
+        this.template = template;
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            authenticate(exchange);
+            exchange = authenticate(exchange);
             return chain.filter(exchange);
         });
     }
 
-    private Mono<Void> authenticate(ServerWebExchange exchange) {
+    private ServerWebExchange authenticate(ServerWebExchange exchange) {
         if (validator.isSecured.test(exchange.getRequest())) {
             String token = getJwtToken(exchange);
             return validate(token, exchange);
         }
-        return Mono.empty();
+        return exchange;
     }
 
     private String getJwtToken(ServerWebExchange exchange) {
@@ -56,23 +57,27 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         throw new RuntimeException("Incorrect authorization method. Use Bearer");
     }
 
-    private Mono<Void> validate(String jwtToken, ServerWebExchange exchange) {
-        return webClientBuilder.build()
-            .post()
-            .uri("http://AUTH-SERVICE/auth/validate")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
-            .retrieve()
-            .bodyToMono(Boolean.class)
-            .flatMap(isValid -> checkAuthStatus(isValid, exchange));
+    private ServerWebExchange validate(String jwtToken, ServerWebExchange exchange) {
+        HttpEntity<String> entity = new HttpEntity<>(jwtToken);
+        
+        ResponseEntity<String> response = template.exchange(
+            "http://192.168.0.100:8180/auth/validate",
+            HttpMethod.POST,
+            entity,
+            String.class
+        );
+        return checkAuthStatus(response.getBody(), exchange);
     }
 
-    private Mono<Void> checkAuthStatus(Boolean isTokenValid, ServerWebExchange exchange) {
-        if (Boolean.TRUE.equals(isTokenValid)) {
-            return Mono.empty();
+    private ServerWebExchange checkAuthStatus(String username, ServerWebExchange exchange) {
+        if (!username.isEmpty()) {
+            ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
+            .header("X-Authenticated-Username", username)
+            .build();
+        return exchange.mutate().request(modifiedRequest).build();
         }
         else {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            throw new RuntimeException("Unauthorized access: username is null or empty");
         }
     }
 

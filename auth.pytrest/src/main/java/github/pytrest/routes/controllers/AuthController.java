@@ -55,7 +55,8 @@ public class AuthController {
     }
 
     @PostMapping("/validate")
-    private ResponseEntity<String> validate(@RequestBody String token) {
-    return ResponseEntity.ok(authService.getUsername(token));
+    private ResponseEntity<?> validate(@RequestBody String token) {
+        String username = authService.getUsername(token);
+        return username.isEmpty()? ResponseEntity.status(HttpStatus.UNAUTHORIZED).build() : ResponseEntity.ok(username);
     }
 }
