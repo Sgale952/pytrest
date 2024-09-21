@@ -1,6 +1,5 @@
 package github.pytrest.filter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,13 +12,13 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
-    @Autowired
-    private RouteValidator validator;
-    @Autowired
-    private WebClient.Builder webClientBuilder;
+    private final RouteValidator validator;
+    private final WebClient.Builder webClientBuilder;
 
-    public AuthenticationFilter() {
+    public AuthenticationFilter(RouteValidator routeValidator, WebClient.Builder wBuilder) {
         super(Config.class);
+        this.validator = routeValidator;
+        this.webClientBuilder = wBuilder;
     }
 
     @Override
@@ -60,7 +59,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     private Mono<Void> validate(String jwtToken, ServerWebExchange exchange) {
         return webClientBuilder.build()
             .post()
-            .uri("http://IDENTITY-SERVICE/auth/validate")
+            .uri("http://AUTH-SERVICE/auth/validate")
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
             .retrieve()
             .bodyToMono(Boolean.class)

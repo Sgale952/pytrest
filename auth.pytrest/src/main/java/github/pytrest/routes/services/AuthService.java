@@ -29,8 +29,11 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    public ResponseEntity<Boolean> validate(String token) {
-        return ResponseEntity.ok(jwtUtils.validateJwtToken(token));
+    public String getUsername(String token) {
+        if (jwtUtils.validateJwtToken(token)) {
+            return jwtUtils.getUsernameFromJwtToken(token);
+        }
+            return null;
     }
 
     public ResponseEntity<?> authenticate(LoginRequest loginRequest) {

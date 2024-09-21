@@ -3,7 +3,7 @@ spring:
     name: COLLECTIONS-SERVICE
 
 server:
-  port: 8380
+  port: 8280
 
 eureka:
   client:

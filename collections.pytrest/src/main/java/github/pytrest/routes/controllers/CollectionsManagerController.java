@@ -1,27 +1,25 @@
 package github.pytrest.routes.controllers;
 
-import github.pytrest.routes.repositories.CollectionFillingRepo;
-import github.pytrest.routes.repositories.CollectionRepo;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import github.pytrest.routes.services.CollectionsManagerService;
 
 @RestController
 @RequestMapping("/collections")
 public class CollectionsManagerController {
-    private final CollectionRepo collectionRepo;
-    private final CollectionFillingRepo collectionFillingRepo;
+    private final CollectionsManagerService collectionManagerService;
 
-    public CollectionsManagerController(CollectionRepo collectionRepo, CollectionFillingRepo collectionFillingRepo) {
-        this.collectionRepo = collectionRepo;
-        this.collectionFillingRepo = collectionFillingRepo;
+    public CollectionsManagerController(CollectionsManagerService collectionManagerService) {
+        this.collectionManagerService = collectionManagerService;
     }
 
     @PostMapping("/create")
-    private ResponseEntity<String> create() {
-        return ResponseEntity.ok("SUS");
+    private ResponseEntity<?> create(@RequestHeader("X-Authenticated-Username") String username, @RequestBody String collectionName) {
+        return ResponseEntity.ok(collectionManagerService.create(username, collectionName));
     }
 }

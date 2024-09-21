@@ -15,6 +15,13 @@ public class CollectionEntity {
     private String name;
     private LocalDateTime createDate;
 
+    public CollectionEntity() {};
+
+    public CollectionEntity(String owner, String name) {
+        this.owner = owner;
+        this.name = name;
+    }
+
     public long getCollectionId() {
         return collectionId;
     }
