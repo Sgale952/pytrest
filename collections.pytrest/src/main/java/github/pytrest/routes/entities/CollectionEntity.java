@@ -1,6 +1,9 @@
 package github.pytrest.routes.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -10,9 +13,11 @@ import java.time.LocalDateTime;
 @Table(name = "collections")
 public class CollectionEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long collectionId;
     private String owner;
     private String name;
+    @Column(name = "create_date", updatable = false, insertable = false)
     private LocalDateTime createDate;
 
     public CollectionEntity() {};

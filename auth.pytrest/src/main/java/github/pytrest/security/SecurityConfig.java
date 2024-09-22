@@ -38,15 +38,26 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/auth/register", "/auth/login", "/auth/validate", "/error").permitAll()
+                .requestMatchers(
+                    "/auth/register",
+                    "/auth/login",
+                    "/auth/validate",
+                    "/auth/{username}/profile",
+                    "/error"
+                    ).permitAll()
                 .anyRequest().authenticated());
+
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         http.exceptionHandling(exception -> exception
                 .authenticationEntryPoint(unauthorizedHandler));
+
         http.headers(headers -> headers
                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+
         http.csrf(AbstractHttpConfigurer::disable);
+
         http.addFilterBefore(authenticationJwtTokenFilter(),
                 UsernamePasswordAuthenticationFilter.class);
 

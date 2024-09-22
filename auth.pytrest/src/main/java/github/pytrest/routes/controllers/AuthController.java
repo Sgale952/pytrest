@@ -37,7 +37,7 @@ public class AuthController {
                     .password(passwordEncoder.encode(loginRequest.password()))
                     .roles("USER")
                     .build();
-            userDetailsManager.createUser(newUser);
+            userDetailsManager.createUser(newUser); //When a row is created in the "users" table, the database automatically creates a row in "users_profile"
 
             return authService.authenticate(loginRequest);
         }

@@ -1,4 +1,4 @@
 package github.pytrest.routes.models;
 
-public record CollectionData() {
+public record CollectionData(long collectionId ) {
 }

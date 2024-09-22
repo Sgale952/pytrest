@@ -2,11 +2,16 @@ package github.pytrest.routes.controllers;
 
 import github.pytrest.routes.entities.UserProfileEntity;
 import github.pytrest.routes.models.ChangePassword;
+import github.pytrest.routes.models.UserProfile;
 import github.pytrest.routes.repositories.UserProfileRepo;
 import github.pytrest.security.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +32,14 @@ public class CredentialsManagerController {
         this.jwtUtils = jwtUtils;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsManager = userDetailsManager;
+    }
+
+    //TODO: get user collections
+    @GetMapping("/{username}/profile")
+    private ResponseEntity<?> pofile(@PathVariable String username) {
+        UserProfileEntity entity = userProfileRepo.findById(username).orElseThrow();
+        UserProfile profile = new UserProfile(entity.getUsername(), entity.getAvatarId());
+        return ResponseEntity.ok(profile);
     }
 
     @PostMapping("/change-password")
