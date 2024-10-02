@@ -61,7 +61,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         HttpEntity<String> entity = new HttpEntity<>(jwtToken);
         
         ResponseEntity<String> response = template.exchange(
-            "http://192.168.0.100:8180/auth/validate",
+            "http://192.168.0.106:8180/auth/validate",
             HttpMethod.POST,
             entity,
             String.class

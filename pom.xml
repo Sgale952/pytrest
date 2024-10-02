@@ -25,6 +25,7 @@
     <module>gateway.pytrest</module>
     <module>eurekaserver.pytrest</module>
     <module>collections.pytrest</module>
+    <module>images.pytrest</module>
   </modules>
 
   <dependencies>

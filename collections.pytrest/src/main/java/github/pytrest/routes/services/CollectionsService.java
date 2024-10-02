@@ -1,6 +1,5 @@
 package github.pytrest.routes.services;
 
-import org.bouncycastle.crypto.RuntimeCryptoException;
 import org.springframework.stereotype.Service;
 
 import github.pytrest.routes.entities.CollectionEntity;

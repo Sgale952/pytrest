@@ -25,6 +25,8 @@ public class RouteValidator {
         "/collections/{collectionId}/collection",
         "/collections/{username}/collections",
 
+        "/images/{imageId}/image",
+
         "/eureka",
         "/error"
     );

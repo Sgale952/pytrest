@@ -3,7 +3,7 @@ CREATE TABLE images (
     owner VARCHAR(30) NOT NULL,
     name VARCHAR(20) NOT NULL,
     category VARCHAR(15) NOT NULL,
-    create_date TIMESTAMP,
+    create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (owner) REFERENCES users(username) ON DELETE CASCADE,
     FOREIGN KEY (category) REFERENCES categories(category) ON DELETE RESTRICT ON UPDATE CASCADE

@@ -1,3 +1,0 @@
-CREATE TABLE tags (
-    tag VARCHAR(15) PRIMARY KEY
-);

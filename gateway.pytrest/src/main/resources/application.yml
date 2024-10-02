@@ -16,6 +16,13 @@ spring:
           filters:
             - AuthenticationFilter
 
+        - id: images-service
+          uri: lb://IMAGES-SERVICE
+          predicates:
+            - Path=/images/**
+          filters:
+            - AuthenticationFilter
+
   application:
     name: GATEWAY
 
