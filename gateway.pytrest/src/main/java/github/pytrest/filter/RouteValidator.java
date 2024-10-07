@@ -23,6 +23,7 @@ public class RouteValidator {
         "/auth/{username}/profile",
 
         "/collections/{collectionId}/collection",
+        "/collections/{collectionId}/images",
         "/collections/{username}/collections",
 
         "/images/{imageId}/image",

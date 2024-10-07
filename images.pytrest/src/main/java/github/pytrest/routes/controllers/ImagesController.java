@@ -28,7 +28,7 @@ public class ImagesController {
     @GetMapping("/{imageId}/image")
     private ResponseEntity<?> getImage(@PathVariable String imageId) {
         long id = Long.valueOf(imageId);
-        return ResponseEntity.ok(imagesService.getImage(id));
+        return imagesService.getImage(id);
     }
 
     @PostMapping(value = "/create", consumes = "multipart/form-data")

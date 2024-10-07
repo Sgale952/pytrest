@@ -1,4 +1,6 @@
 package github.pytrest.routes.models;
 
-public record UserProfile(String nickname, long avatarId) {
+import java.util.List;
+
+public record UserProfile(String nickname, long avatarId, List<?> collections) {
 }

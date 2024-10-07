@@ -11,6 +11,12 @@ public class CollectionFillingEntity {
     private long collectionId;
     private long imageId;
 
+    public CollectionFillingEntity() {}
+    public CollectionFillingEntity(long collectionId, long imageId) {
+        this.collectionId = collectionId;
+        this.imageId = imageId;
+    }
+
     public long getCollectionId() {
         return collectionId;
     }

@@ -5,12 +5,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.DirectoryStream;
 import java.util.Optional;
 
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import github.pytrest.routes.entities.ImagesEntity;
 import github.pytrest.routes.models.ImageCategories;
@@ -28,8 +36,24 @@ public class ImagesService {
         this.imagesRepo = imagesRepo;
     }
 
-    public ImagesEntity getImage(long id) {
-        return imagesRepo.findById(id).orElseThrow();
+    public ResponseEntity<Resource> getImage(long id) {
+        try {
+            Path filePath = findFileById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found"));
+            Resource resource = new UrlResource(filePath.toUri());
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filePath.getFileName() + "\"")
+                    .body(resource);
+        }
+        catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error retrieving image", e);
+        }
     }
 
     public long createImage(String owner, ImageData data) {
@@ -50,6 +74,17 @@ public class ImagesService {
         ImagesEntity renamingImage = checkOwner(owner, imageId);
         renamingImage.setName(newName);
         imagesRepo.save(renamingImage);
+    }
+
+    private Optional<Path> findFileById(long id) throws IOException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(IMAGES_DIR), id + ".*")) {
+            for (Path path : stream) {
+                if (Files.isRegularFile(path)) {
+                    return Optional.of(path);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private void saveImageFile(MultipartFile file, long imageId) {
